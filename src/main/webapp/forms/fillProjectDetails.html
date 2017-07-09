@@ -1,0 +1,307 @@
+<h3>Purchase Order</h3>
+<form role="form" name="variablesForm">
+    <script cam-script type="text/form-script">
+      $scope.calculateTotal = function() {
+      
+        var form = $scope.variablesForm;
+
+        if(!form.buildingServices.$valid || !form.contractAdministration.$valid) {
+          $scope.totalFee = undefined;
+
+
+        } else {
+
+          var buildingServices = form.buildingServices.$modelValue;
+          var contractAdministration = form.contractAdministration.$modelValue;
+
+         //Total
+
+          $scope.totalFee = buildingServices + contractAdministration ;
+
+        }
+      };
+
+      //The tabset directive creates a new isolated scope, so that the Camunda forms SDK can not discover what goes on in there. 
+      //Therefore it can not automatically extract the variable and its value from the select input when its part of the tabset.
+      //That is why below function is written to glue between presentation and process layer.
+
+      camForm.on('submit', function(evt) {
+         var form = $scope.variablesForm;
+
+         // Company Details attribute injection into Camunda Process
+         camForm.variableManager.createVariable({ name: 'companyName', type: 'String', value: form.companyName.$modelValue});
+         camForm.variableManager.createVariable({ name: 'abn', type: 'String', value: form.abn.$modelValue});
+
+         //Contact Details attribute injection into Camunda Process
+         camForm.variableManager.createVariable({ name: 'firstname', type: 'String', value: form.firstname.$modelValue});
+         camForm.variableManager.createVariable({ name: 'email', type: 'String', value: form.email.$modelValue});
+         camForm.variableManager.createVariable({ name: 'contactFacsimile', type: 'String', value: form.contactFacsimile.$modelValue});
+         camForm.variableManager.createVariable({ name: 'lastname', type: 'String', value: form.lastname.$modelValue});
+         camForm.variableManager.createVariable({ name: 'contactOfficePhone', type: 'String', value: form.contactOfficePhone.$modelValue});
+         camForm.variableManager.createVariable({ name: 'contactMobile', type: 'String', value: form.contactMobile.$modelValue});
+
+         
+         //Service Address attribute injection into Camunda Process 
+         camForm.variableManager.createVariable({ name: 'streetNumber', type: 'String', value: form.streetNumber.$modelValue});
+         camForm.variableManager.createVariable({ name: 'streetName', type: 'String', value: form.streetName.$modelValue});
+         camForm.variableManager.createVariable({ name: 'suburb', type: 'String', value: form.suburb.$modelValue});
+         camForm.variableManager.createVariable({ name: 'postCode', type: 'String', value: form.postCode.$modelValue});
+         camForm.variableManager.createVariable({ name: 'state', type: 'String', value: form.state.$modelValue});
+         camForm.variableManager.createVariable({ name: 'additionalAddressDetails', type: 'String', value: form.additionalAddressDetails.$modelValue});
+
+         //Fee Details
+         camForm.variableManager.createVariable({ name: 'buildingServices', type: 'Double', value: form.buildingServices.$modelValue});
+         camForm.variableManager.createVariable({ name: 'contractAdministration', type: 'Double', value: form.contractAdministration.$modelValue});
+         //camForm.variableManager.createVariable({ name: 'totalFee', type: 'Double', value: form.totalFee.$modelValue});
+});
+
+    $scope.getUserList = function() {
+
+    var xhttp = new XMLHttpRequest();
+    xhttp.open("POST", "http://localhost:8080/engine-rest/user?memberOfGroup=sales", false);
+    xhttp.setRequestHeader("Content-type", "application/json");
+    xhttp.send();
+    var response = JSON.parse(xhttp.responseText);
+    $scope.userList = response;
+    }
+    </script>
+    
+   
+	<tabset>
+	
+	 <tab heading="Job">
+	<h2>Job</h2>
+	<div class="row">
+
+        <!-- Job Type -->
+		<div class="col-xs-6">	
+			<div class="form-group">
+				<label for="jobType">Job Type</label>
+				<div class="controls">
+					<input class="form-control" type="text"
+						cam-variable-name="jobType" cam-variable-type="String" name="jobType" />
+				</div>
+			</div>
+		</div>
+		
+		<!-- Job ID -->
+		<div class="col-xs-6">
+			<div class="form-group">
+				<label for="jobID">Job ID</label>
+				<div class="controls">
+					<input class="form-control" type="text"
+						cam-variable-name="jobID" cam-variable-type="String" name="jobID" />
+				</div>
+			</div>
+		</div>
+		
+		<!-- Job Name -->
+		<div class="col-xs-6">
+        <div class="form-group">
+				<label for="jobName">Job Name</label>
+				<div class="controls">
+					<input class="form-control" type="text"
+						cam-variable-name="jobName" cam-variable-type="String" name="jobName" />
+				</div>
+			</div>
+		</div>
+		
+		<!-- File upload -->
+		    <div class="col-xs-6">
+			<div class="form-group">
+				<label for="uploadFile">Upload Fee Proposal Letter</label>
+				<div class="controls">
+					<input type="file"
+       cam-variable-name="feeProposalLetter"
+       cam-variable-type="File"
+       cam-max-filesize="10000000" />
+				</div>
+			</div>
+		</div>
+		
+		
+	</div>
+
+	</tab> 
+	
+	<tab heading="Contact Details">
+
+	<h2>Contact Details</h2>
+	<div class="row">
+
+		<div class="col-xs-6">
+
+
+
+
+			<!-- Firstname -->
+			<div class="form-group">
+				<label for="inputFirstname">Firstname</label>
+				<div class="controls">
+					<input class="form-control" type="text" name="firstname"
+						cam-variable-name="firstname" cam-variable-type="String"
+						placeholder="John" ng-minlength="2" ng-maxlength="20" />
+				</div>
+			</div>
+
+			<!-- Email -->
+			<div class="form-group">
+				<label for="inputEmail">Email</label>
+				<div class="controls">
+					<input class="form-control" type="text" name="email"
+						cam-variable-name="email" cam-variable-type="String"
+						placeholder="john.doe@camunda.org" ng-minlength="2"
+						ng-maxlength="20" />
+				</div>
+			</div>
+
+			<!-- Facsimile -->
+			<div class="form-group">
+				<label for="inputContactFacsimile">Contact Facsimile</label>
+				<div class="controls">
+					<input class="form-control"  name="contactFacsimile"
+						cam-variable-name="contactFacsimile" cam-variable-type="Double"
+						placeholder="Enter Facsimile Number" ng-minlength="1"
+						ng-maxlength="10" />
+				</div>
+			</div>
+
+		</div>
+		<div class="col-xs-6">
+			<!-- Lastname -->
+			<div class="form-group">
+				<label for="inputLastname">Lastname</label>
+				<div class="controls">
+					<input class="form-control" type="text" name="lastname"
+						cam-variable-name="lastname" cam-variable-type="String"
+						placeholder="Doe" ng-minlength="2" ng-maxlength="20" />
+				</div>
+			</div>
+
+
+
+
+			<!-- Office Phone -->
+			<div class="form-group">
+				<label for="inputContactOfficePhone">Contact Office Phone</label>
+				<div class="controls">
+					<input class="form-control" name="contactOfficePhone"
+						cam-variable-name="contactOfficePhone" cam-variable-type="Double"
+						placeholder="Enter Office Phone Number" ng-minlength="10"
+						ng-maxlength="10" />
+				</div>
+			</div>
+
+			<!-- Mobile -->
+			<div class="form-group">
+				<label for="inputContactMobile">Contact Mobile</label>
+				<div class="controls">
+					<input class="form-control" name="contactMobile"
+						cam-variable-name="contactMobile" cam-variable-type="Double"
+						placeholder="Enter Mobile Number" ng-minlength="10"
+						ng-maxlength="10" />
+				</div>
+			</div>
+
+
+		</div>
+
+
+	</div>
+
+
+	</tab> <!-- Street Name --> <tab heading="Service Address">
+	<h2>Service Address</h2>
+	<div class="row">
+		<div class="col-xs-6">
+
+			<div class="form-group">
+				<label for="inputStreetNumber">Street Number</label>
+				<div class="controls">
+					<input class="form-control" required type="text" name="streetNumber"
+						cam-variable-name="streetNumber" cam-variable-type="String"
+						placeholder="2" ng-minlength="1"
+						ng-maxlength="20" />
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label for="inputPostCode">Post Code</label>
+				<div class="controls">
+					<input class="form-control" type="text" name="postCode"
+						cam-variable-name="postCode" cam-variable-type="String"
+						placeholder="Enter Post Code" ng-minlength="4" ng-maxlength="4" />
+				</div>
+			</div>
+
+			<!-- State -->
+			<div class="form-group">
+				<label for="selectState">State</label>
+				<div class="controls">
+					<!--select box -->
+					<select class="form-control" name="state"
+						cam-variable-name="state" cam-variable-type="String">
+						<option value="VIC">VIC</option>
+						<option value="NSW">NSW</option>
+						<option value="ACT">ACT</option>
+						<option value="NT">NT</option>
+						<option value="QLD">QLD</option>
+						<option value="SA">SA</option>
+						<option value="TAS">TAS</option>
+					</select>
+				</div>
+			</div>
+
+		</div>
+		
+		<div class="col-xs-6">
+
+			<div class="form-group">
+				<label for="inputStreetName">Street Name</label>
+				<div class="controls">
+					<input class="form-control" type="text"
+						cam-variable-name="streetName" cam-variable-type="String" name="streetName"
+						placeholder="Enter Street Name" ng-minlength="2" ng-maxlength="20" />
+				</div>
+			</div>
+
+
+
+
+
+
+			<div class="form-group">
+				<label for="inputSuburb">Suburb</label>
+				<div class="controls">
+					<input class="form-control" type="text"
+						cam-variable-name="suburb" cam-variable-type="String" name="suburb"
+						placeholder="Enter Suburb" ng-minlength="2" ng-maxlength="20" />
+				</div>
+			</div>
+
+
+
+			<div class="form-group">
+				<label for="inputAdditionalAddressDetails">Additional
+					Address Details</label>
+				<div class="controls">
+					<textarea class="form-control"
+						cam-variable-name="additionalAddressDetails" name="additionalAddressDetails"
+						cam-variable-type="String" rows="4"></textarea>
+				</div>
+			</div>
+
+		</div>
+		</div>
+	</tab>
+	 <tab heading="Internal Team">
+
+	<h2>Internal Team Allocation</h2>
+	<div class="row">
+
+		
+	</div>
+	</tab> 
+
+	</tabset>
+</form>

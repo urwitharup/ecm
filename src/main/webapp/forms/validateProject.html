@@ -1,0 +1,46 @@
+<form role="form" name="form">
+	<!--  <div class="form-group">
+    <label for="customerId-field">Customer ID</label>
+    <input required
+           cam-variable-name="customerId"
+           cam-variable-type="String"
+           class="form-control" />
+  </div>
+  <div class="form-group">
+    <label for="amount-field">Amount</label>
+    <input cam-variable-name="amount"
+           cam-variable-type="Double"
+           class="form-control" />
+  </div>-->
+
+	<div class="form-group">
+		<label for="projectValidationResult">Project Validation Result</label>
+		<div class="controls">
+
+			<input type="radio" name="Approved" value="true" checked> Approved<br> 
+			<input type="radio"
+				name="Approved" value="false"> Rejected<br>
+				
+        <script cam-script type="text/form-script">
+        var variableManager = camForm.variableManager;
+
+        camForm.on('submit', function() {
+            // this callback is executed when the form is submitted, *before* the submit request to
+            // the server is executed
+
+            // creating a new variable will add it to the form submit
+            variableManager.createVariable({
+                name: 'isProjectApproved',
+                type: 'String',
+                value: $('input:radio[name=Approved]:checked').val(),
+                isDirty: true
+            });
+        });
+    </script>
+		</div>
+	</div>
+	
+	
+
+</form>
+
